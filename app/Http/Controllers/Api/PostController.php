@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,6 +14,20 @@ class PostController extends Controller
         $data['posts'] = Post::with('user:id,name')->get();
         return $this->api_response(true, 'Posts fetched successfully', $data);
     }
+    public function getUserPosts($userId)
+{
+    $user = User::find($userId);
+
+    if (!$user) {
+        return $this->api_response(false, 'User not found', [], 404);
+    }
+
+    $posts = Post::with('user:id,name')
+        ->where('user_id', $userId)
+        ->get();
+
+    return $this->api_response(true, 'Posts fetched successfully', ['user' => $user->name, 'posts' => $posts]);
+}
 
     public function show($id)
     {
@@ -27,7 +42,7 @@ class PostController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
-            'body' => 'required|string',
+            'description' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -52,7 +67,7 @@ class PostController extends Controller
 
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|required|string|max:255',
-            'body' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string',
         ]);
 
         if ($validator->fails()) {

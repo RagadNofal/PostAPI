@@ -14,14 +14,15 @@ use App\Http\Controllers\Api\PostController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::group(['prefix' => 'post','middleware' => 'auth:sanctum'],function(){
 
-
-    Route::get('posts', [PostController::class, 'index']);
-    Route::get('posts/{id}', [PostController::class, 'show']);
-    Route::post('posts', [PostController::class, 'store']);
-    Route::put('posts/{id}', [PostController::class, 'update']);
-    Route::delete('posts/{id}', [PostController::class, 'destroy']);
-
+    Route::get('all', [PostController::class, 'index']);
+    Route::get('users/{userId}/posts', [PostController::class, 'getUserPosts']);
+    Route::get('showPosts/{id}', [PostController::class, 'show']);
+    Route::post('addPost', [PostController::class, 'store']);
+    Route::put('EditePost/{id}', [PostController::class, 'update']);
+    Route::delete('DeletePost/{id}', [PostController::class, 'destroy']);
+});
 
 Route::group(['prefix' => 'users'] , function () {
     Route::get('all' , [UserController::class , 'index']);
